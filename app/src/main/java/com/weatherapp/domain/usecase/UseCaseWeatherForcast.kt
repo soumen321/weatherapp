@@ -12,7 +12,7 @@ class UseCaseWeatherForcast @Inject constructor(
 ) {
     suspend operator fun invoke(lat:Double,lan:Double): Resource<WeatherForcast> {
         try {
-            val response = repository.getWeatherForcast(lat,lan, Constants.OPEN_WEATHER_API_KEY)
+            val response = repository.getWeatherForecast(lat,lan, Constants.OPEN_WEATHER_API_KEY)
             if (response.isSuccessful) {
                 return Resource.Success(
                     response.body()?: WeatherForcast(emptyList())

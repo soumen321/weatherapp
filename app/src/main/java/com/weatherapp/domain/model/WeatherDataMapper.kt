@@ -13,5 +13,7 @@ data class WeatherDataMapper(
     val description: String,
     val visibility: String,
     val realFeel: String,
-    val currentIcon: String
+    val currentIcon: String,
+    val lat: Double,
+    val lon: Double,
 )

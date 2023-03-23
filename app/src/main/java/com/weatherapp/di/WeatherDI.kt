@@ -3,6 +3,8 @@ package com.weatherapp.di
 import android.app.Application
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.weatherapp.data.pref.AppPrefs
+import com.weatherapp.data.pref.PrefsHelper
 import com.weatherapp.data.remote.IWeatherRemoteApi
 import com.weatherapp.data.repository.WeatherRepositoryImpl
 import com.weatherapp.domain.repository.IWeatherRepository
@@ -47,5 +49,11 @@ object WeatherDI {
         UseCaseWeatherCard(repo),
         UseCaseWeatherForcast(repo)
     )
+
+    @Provides
+    @Singleton
+    fun providePrefHelper(appPrefs: AppPrefs): PrefsHelper {
+        return appPrefs
+    }
 
 }

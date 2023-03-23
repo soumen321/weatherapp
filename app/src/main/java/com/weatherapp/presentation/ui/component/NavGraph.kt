@@ -21,10 +21,10 @@ fun NavGraph (
         startDestination = startDestination)
     {
         composable(route = Screens.SplashScreen.route){
-            SplashScreenUI(navController,viewModel)
+            SplashScreenUI(viewModel)
         }
         composable(route = Screens.Home.route){
-            HomeScreenUI(navController,viewModel)
+            HomeScreenUI(viewModel)
         }
     }
 }

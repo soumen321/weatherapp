@@ -26,7 +26,9 @@ interface IWeatherDataBuilder {
                 wind = "${round(dataModel.wind.speed).toInt()} km/h",
                 visibility = "${dataModel.visibility / 1000} km",
                 realFeel = "${round(dataModel.main.feelsLike).toInt()}º",
-                currentIcon = dataModel.weatherItems.first().icon.toString()
+                currentIcon = dataModel.weatherItems.first().icon.toString(),
+                lat = dataModel.coord.lat,
+                lon = dataModel.coord.long
             )
 
         }

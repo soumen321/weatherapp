@@ -1,5 +1,6 @@
 package com.weatherapp.presentation.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,12 +9,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bindingmvvm.utility.Resource
+import com.weatherapp.data.pref.PrefsHelper
 import com.weatherapp.domain.location.LocationTracker
 import com.weatherapp.domain.model.WeatherDataMapper
 import com.weatherapp.domain.usecase.UseCaseWeather
 import com.weatherapp.presentation.ui.component.SearchState
 import com.weatherapp.presentation.ui.component.WeatherState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -23,23 +26,26 @@ import javax.inject.Inject
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
     private val usWeather: UseCaseWeather,
-    private val locationTracker: LocationTracker
+    private val locationTracker: LocationTracker,
+    private val prefsHelper: PrefsHelper
 ) : ViewModel(),IWeatherViewModelContract {
 
     var state by mutableStateOf(WeatherState())
 
-
+    /**
+     * fetch weather card data
+     */
     override fun onGetWeatherCardData() {
         /*coroutine launch*/
         viewModelScope.launch {
 
             locationTracker.getCurrentLocation()?.let { location ->
                 state = state.copy(
-                    isLoading = true,
-                    onComplete = false
+                    isLoading = true
                 )
+                val lastCity = prefsHelper.getLastCity()
 
-                when(val result = usWeather.useCaseWeatherCard(location.latitude, location.longitude)) {
+                when(val result = usWeather.useCaseWeatherCard(location.latitude, location.longitude,lastCity)) {
 
                     is Resource.Loading -> {
                         state = state.copy(
@@ -48,6 +54,7 @@ class WeatherViewModel @Inject constructor(
                         )
                     }
                     is Resource.Success -> {
+                        delay(2000)
                         state = state.copy(
                             weatherInfo = result.data?.let {
                                 IWeatherDataBuilder.createDataBuilder(
@@ -55,9 +62,11 @@ class WeatherViewModel @Inject constructor(
                                 )
                             },
                             isLoading = false,
-                            onComplete = true
+                            onComplete = true,
+                            error = null,
                         )
-                        fetchWeatherForcastData(location.latitude, location.longitude)
+
+                        fetchWeatherForecastData(state.weatherInfo?.lat?:0.0, state.weatherInfo?.lon?:0.0)
                     }
                     is Resource.Error -> {
                         state = state.copy(
@@ -77,7 +86,11 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
-    private fun fetchWeatherForcastData(latitude: Double, longitude: Double) {
+    /**
+     * fetch hourly weather forecast
+     */
+
+    private fun fetchWeatherForecastData(latitude: Double, longitude: Double) {
         viewModelScope.launch {
             val result =  usWeather.useCaseWeatherForcast(latitude,longitude)
             state = state.copy(
@@ -86,9 +99,43 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
-    fun searchByCity(city:String){
+    /**
+     * search by search input query
+     */
 
+    override fun searchByCity(city:String){
+        viewModelScope.launch {
+            state = state.copy(
+                isLoading = true
+            )
+
+            when( val result = usWeather.useCaseWeatherCard(0.0, 0.0,city)) {
+                is Resource.Success -> {
+                    state = state.copy(
+                        weatherInfo = result.data?.let {
+                            IWeatherDataBuilder.createDataBuilder(it)
+
+                        },
+                        isLoading = false,
+                        onComplete = true,
+                        error = null,
+                    )
+
+                    prefsHelper.saveLastCity(state.weatherInfo?.city?:"")
+                    fetchWeatherForecastData(state.weatherInfo?.lat?:0.0, state.weatherInfo?.lon?:0.0)
+                }
+                is Resource.Error -> {
+                    state = state.copy(
+                        isLoading = false,
+                        error = result.message,
+                    )
+                }
+
+            }
+
+        }
     }
+
 
     /**
      * Notify that the user when typing the search input
@@ -97,29 +144,8 @@ class WeatherViewModel @Inject constructor(
         state = state.copy(
             searchState = SearchState.Changing(query = searchInput)
         )
-
     }
 
-    /**
-     * Enable or disable search view
-     */
-    fun enableSearchView(enabled: Boolean) {
-        state = state.copy(
-            searchState = SearchState.Changing(query = state.searchState.query)
-        )
-    }
-
-    enum class WeatherIndex(private val index: Int) {
-        Today(0), Tomorrow(1);
-
-        fun value(): Int = index
-
-        companion object {
-            fun from(index: Int): WeatherIndex {
-                return if (index == 0) Today else Tomorrow
-            }
-        }
-    }
 
 
 }

@@ -1,4 +1,8 @@
 package com.weatherapp.presentation.ui
+import android.Manifest
+import android.util.Log
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -9,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -19,7 +24,7 @@ import com.weatherapp.presentation.ui.theme.*
 import com.weatherapp.presentation.viewmodel.WeatherViewModel
 
 @Composable
-fun SplashScreenUI(navController: NavController, viewModel: WeatherViewModel){
+fun SplashScreenUI(viewModel: WeatherViewModel){
 
 
     Column(
@@ -56,7 +61,7 @@ fun SplashScreenUI(navController: NavController, viewModel: WeatherViewModel){
                 ) {
 
                     Text(
-                        text = "Find your weather predictions in your City",
+                        text = stringResource(id = R.string.splash_heading_txt),
                         color = White,
                         fontSize = 28.sp,
                         textAlign = TextAlign.Center,
@@ -75,17 +80,13 @@ fun SplashScreenUI(navController: NavController, viewModel: WeatherViewModel){
                     Spacer(modifier = Modifier.height(40.dp))
 
 
-                    Button(
-                        onClick = {},
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = DeepBlue,
-                            contentColor = White
-                        ),
-                        contentPadding = PaddingValues(horizontal = 30.dp, vertical = 10.dp),
-                        modifier = Modifier.clip(shape = Shapes.medium)
-                    ) {
-                        Text(text = "Get Start", fontSize = 18.sp, color = White)
-                    }
+                    Text(
+                        text = stringResource(id = R.string.get_start_txt),
+                        color = White,
+                        fontSize = 22.sp,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.SemiBold
+                    )
 
                 }
             }

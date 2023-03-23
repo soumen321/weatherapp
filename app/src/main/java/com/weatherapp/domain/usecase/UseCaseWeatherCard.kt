@@ -1,20 +1,22 @@
 package com.weatherapp.domain.usecase
-
 import com.bindingmvvm.utility.Resource
 import com.weatherapp.R
 import com.weatherapp.domain.model.*
 import com.weatherapp.domain.repository.IWeatherRepository
 import com.weatherapp.utility.Constants
-import java.sql.Date
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 class UseCaseWeatherCard @Inject constructor(
-    private val repository : IWeatherRepository
+    private val repository : IWeatherRepository,
 ){
-    suspend operator fun invoke(lat:Double,lan:Double): Resource<WeatherData>{
+    suspend operator fun invoke(lat:Double,lan:Double,searchQuery:String): Resource<WeatherData>{
          try {
-            val response = repository.getWeather(lat,lan, Constants.OPEN_WEATHER_API_KEY)
+             val response  = if(searchQuery.isNotEmpty()){
+                 repository.getWeatherByCity(searchQuery, Constants.OPEN_WEATHER_API_KEY)
+             } else {
+                 repository.getWeather(lat,lan, Constants.OPEN_WEATHER_API_KEY)
+             }
+
             if (response.isSuccessful) {
                 return Resource.Success(
                     response.body()?:WeatherData(
@@ -32,7 +34,7 @@ class UseCaseWeatherCard @Inject constructor(
 
 
             } else {
-                return Resource.Error("Oops!Something went wrong", R.string.lbl_something_wrong)
+                return Resource.Error("city not found", R.string.lbl_something_wrong)
             }
 
         } catch (e:Exception){
