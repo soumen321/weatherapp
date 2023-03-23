@@ -8,6 +8,7 @@ import com.weatherapp.data.repository.WeatherRepositoryImpl
 import com.weatherapp.domain.repository.IWeatherRepository
 import com.weatherapp.domain.usecase.UseCaseWeather
 import com.weatherapp.domain.usecase.UseCaseWeatherCard
+import com.weatherapp.domain.usecase.UseCaseWeatherForcast
 import com.weatherapp.utility.api_service.ServiceUrl.BASE_URL
 import com.weatherapp.utility.common.RetrofitContainer
 import dagger.Binds
@@ -44,6 +45,7 @@ object WeatherDI {
     @Provides
     fun providesWeatherUseCase(repo: IWeatherRepository) = UseCaseWeather(
         UseCaseWeatherCard(repo),
+        UseCaseWeatherForcast(repo)
     )
 
 }

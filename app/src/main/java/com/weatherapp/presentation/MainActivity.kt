@@ -9,12 +9,14 @@ import androidx.activity.viewModels
 import androidx.compose.material.Surface
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
-import com.weatherapp.presentation.ui.NavGraph
 import com.weatherapp.presentation.ui.Screens
+import com.weatherapp.presentation.ui.component.NavGraph
 import com.weatherapp.presentation.ui.theme.DarkBlue
 import com.weatherapp.presentation.ui.theme.WeatherAppTheme
 import com.weatherapp.presentation.viewmodel.WeatherViewModel
@@ -35,6 +37,7 @@ class MainActivity : ComponentActivity() {
         ){
             //api call
             viewModel.onGetWeatherCardData()
+
         }
 
         permissionLauncher.launch(arrayOf(

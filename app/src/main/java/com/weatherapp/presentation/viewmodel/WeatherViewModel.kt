@@ -8,12 +8,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bindingmvvm.utility.Resource
-import com.weatherapp.R
 import com.weatherapp.domain.location.LocationTracker
-import com.weatherapp.domain.model.WeatherData
+import com.weatherapp.domain.model.WeatherDataMapper
 import com.weatherapp.domain.usecase.UseCaseWeather
-import com.weatherapp.presentation.WeatherState
+import com.weatherapp.presentation.ui.component.SearchState
+import com.weatherapp.presentation.ui.component.WeatherState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,13 +26,10 @@ class WeatherViewModel @Inject constructor(
     private val locationTracker: LocationTracker
 ) : ViewModel(),IWeatherViewModelContract {
 
-    private val mLDWeatherCard = MutableLiveData<Resource<WeatherData>>()
-
     var state by mutableStateOf(WeatherState())
-        private set
+
 
     override fun onGetWeatherCardData() {
-       // mLDWeatherCard.postValue(Resource.Loading())
         /*coroutine launch*/
         viewModelScope.launch {
 
@@ -49,10 +49,15 @@ class WeatherViewModel @Inject constructor(
                     }
                     is Resource.Success -> {
                         state = state.copy(
-                            weatherInfo = result.data,
+                            weatherInfo = result.data?.let {
+                                IWeatherDataBuilder.createDataBuilder(
+                                    it
+                                )
+                            },
                             isLoading = false,
                             onComplete = true
                         )
+                        fetchWeatherForcastData(location.latitude, location.longitude)
                     }
                     is Resource.Error -> {
                         state = state.copy(
@@ -69,19 +74,52 @@ class WeatherViewModel @Inject constructor(
                 )
             }
 
-
-           /* val result = useCaseWeather.useCaseWeatherCard(lat,lon) ?: return@launch
-            mLDWeatherCard.postValue(result)
-            val weather = result.data
-            if (null != weather) {
-               // mLDWeatherCard.postValue(weather)
-            } else {
-                mLDWeatherCard.postValue(Resource.UnknownError(R.string.lbl_something_wrong))
-            }*/
         }
     }
 
-    override fun doObserveWeatherCardData(): LiveData<Resource<WeatherData>> = mLDWeatherCard
+    private fun fetchWeatherForcastData(latitude: Double, longitude: Double) {
+        viewModelScope.launch {
+            val result =  usWeather.useCaseWeatherForcast(latitude,longitude)
+            state = state.copy(
+                weatherForcast = result.data
+            )
+        }
+    }
+
+    fun searchByCity(city:String){
+
+    }
+
+    /**
+     * Notify that the user when typing the search input
+     */
+    fun onSearchInputChanged(searchInput: String) {
+        state = state.copy(
+            searchState = SearchState.Changing(query = searchInput)
+        )
+
+    }
+
+    /**
+     * Enable or disable search view
+     */
+    fun enableSearchView(enabled: Boolean) {
+        state = state.copy(
+            searchState = SearchState.Changing(query = state.searchState.query)
+        )
+    }
+
+    enum class WeatherIndex(private val index: Int) {
+        Today(0), Tomorrow(1);
+
+        fun value(): Int = index
+
+        companion object {
+            fun from(index: Int): WeatherIndex {
+                return if (index == 0) Today else Tomorrow
+            }
+        }
+    }
 
 
 }

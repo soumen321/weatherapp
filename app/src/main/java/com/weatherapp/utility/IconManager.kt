@@ -22,6 +22,7 @@ class IconManager {
             "03n" -> R.drawable.a03n_svg
             "04d" -> R.drawable.a04d_svg
             "04n" -> R.drawable.a04n_svg
+            "50d","50n" -> R.drawable.cloud_sunny
 
             else -> R.drawable.a01n_svg
         }

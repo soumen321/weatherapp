@@ -21,6 +21,7 @@ import com.weatherapp.presentation.viewmodel.WeatherViewModel
 @Composable
 fun SplashScreenUI(navController: NavController, viewModel: WeatherViewModel){
 
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
