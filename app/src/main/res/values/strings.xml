@@ -3,6 +3,6 @@
     <string name="lbl_something_wrong">Oops!Something went wrong</string>
     <string name="no_internet">No Internet</string>
     <string name="search_by">Search by city name</string>
-    <string name="splash_heading_txt">Find your weather predictions in your City</string>
-    <string name="get_start_txt">Get Start</string>
+    <string name="splash_heading_txt">Find weather predictions in your City</string>
+    <string name="get_start_txt">Get Started</string>
 </resources>
