@@ -15,6 +15,7 @@ import com.weatherapp.domain.model.WeatherDataMapper
 import com.weatherapp.domain.usecase.UseCaseWeather
 import com.weatherapp.presentation.ui.component.SearchState
 import com.weatherapp.presentation.ui.component.WeatherState
+import com.weatherapp.utility.api_service.Connectivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

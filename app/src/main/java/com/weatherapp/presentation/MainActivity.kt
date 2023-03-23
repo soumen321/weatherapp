@@ -18,6 +18,7 @@ import com.weatherapp.presentation.ui.component.NavGraph
 import com.weatherapp.presentation.ui.theme.DarkBlue
 import com.weatherapp.presentation.ui.theme.WeatherAppTheme
 import com.weatherapp.presentation.viewmodel.WeatherViewModel
+import com.weatherapp.utility.api_service.Connectivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,7 +35,9 @@ class MainActivity : ComponentActivity() {
             ActivityResultContracts.RequestMultiplePermissions()
         ){
             //api call
-            viewModel.onGetWeatherCardData()
+            if(Connectivity.hasInternetConnection(this)){
+                viewModel.onGetWeatherCardData()
+            }
 
         }
 
