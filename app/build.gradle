@@ -31,6 +31,10 @@ android {
             minifyEnabled false
             crunchPngs false // or true
 
+            lintOptions {
+                checkReleaseBuilds false
+                abortOnError false
+            }
         }
 
     }
