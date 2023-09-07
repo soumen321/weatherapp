@@ -1,11 +1,11 @@
 # WeatherApp
  Weather Forecasting Application
  
- Technology Use : MVVM , Clean architectecture , Kotlin Coroutines, Jetpack Compose,Jetpack navigation,Retrofit, Hilt
+ <b>Technology : </b><br/> MVVM , Clean architectecture , Kotlin Coroutines, Jetpack Compose,Jetpack navigation,Retrofit, Hilt
 
- Funtionality :
-               1. Auto Location Detection
-               2. Search using country name , province weather forecast
+ <b>Funtionality :</b> <br/>
+               1. Auto Location Detection <br/>
+               2. Search using city name with country name  weather forecast <br/>
                3. Mokito Unit Test
  
  
